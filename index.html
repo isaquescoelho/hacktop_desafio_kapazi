@@ -10,66 +10,39 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            align-items: flex-start;
             background-color: #f4f4f9;
             overflow: hidden;
         }
 
         /* Container principal do chatbot */
         #chatContainer {
+            display: flex;
+            flex-direction: column;
             width: 100%;
             max-width: 400px;
-            height: 85vh;
+            height: 100vh; /* O chat sempre ocupará toda a altura da tela */
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
             overflow: hidden;
         }
 
-        /* Área de exibição de mensagens do chatbot */
+        /* Caixa de mensagens do chatbot */
         #chatbox {
             flex: 1;
-            padding: 8px;
+            padding: 10px;
             overflow-y: auto;
             background-color: #f9f9f9;
-            border-bottom: 1px solid #ddd;
-        }
-
-        /* Estilos para as mensagens */
-        .message {
-            padding: 8px 12px;
-            margin: 6px 0;
-            border-radius: 12px;
-            max-width: 70%;
-            word-wrap: break-word;
-            font-size: 14px;
-        }
-
-        /* Estilos para mensagens do usuário */
-        .userMessage {
-            background-color: #007bff;
-            color: white;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-
-        /* Estilos para mensagens do bot */
-        .botMessage {
-            background-color: #e0e0e0;
-            color: #333;
-            align-self: flex-start;
-            margin-right: auto;
         }
 
         /* Área de input de texto e botão de envio */
         #userInput {
             display: flex;
-            padding: 8px;
+            padding: 10px;
             background-color: #f1f1f1;
         }
 
@@ -92,26 +65,45 @@
             font-size: 14px;
         }
 
-        /* Estilos responsivos para dispositivos móveis */
+        /* Estilos das mensagens */
+        .message {
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 12px;
+            max-width: 75%;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+
+        .userMessage {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .botMessage {
+            background-color: #e0e0e0;
+            color: #333;
+            align-self: flex-start;
+        }
+
+        /* Ajustes para dispositivos móveis */
         @media screen and (max-width: 600px) {
             #chatContainer {
-                width: 100%;
-                height: calc(100vh - 60px); /* Deixa espaço para o teclado */
-                max-width: 100%;
-                border-radius: 0;
-            }
-
-            #chatbox {
-                height: auto;
-                max-height: 60vh; /* Limita a altura do chatbox */
+                border-radius: 0; /* Remove arredondamento em celulares */
+                height: 100vh; /* Garante que o chat sempre ocupe a tela inteira */
             }
 
             input[type="text"], button {
-                padding: 10px;
+                padding: 12px;
                 font-size: 13px;
             }
-        }
 
+            .message {
+                font-size: 13px;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -128,19 +120,8 @@
     </div>
 </div>
 
-<!-- Script do Chatbot e ajuste de redimensionamento -->
+<!-- Script para adicionar mensagens dinamicamente -->
 <script src="chatbot.js"></script>
-<script>
-    // Redimensiona o chatbox quando o teclado é ativado
-    window.addEventListener('resize', () => {
-        const chatbox = document.getElementById('chatbox');
-        const userInput = document.getElementById('userInput');
-        const availableHeight = window.innerHeight - userInput.offsetHeight;
-        
-        // Ajusta a altura do chatbox para não ser maior que o espaço disponível
-        chatbox.style.maxHeight = `${availableHeight - 20}px`; // Deixa um pequeno espaço adicional
-    });
-</script>
 
 </body>
 </html>
