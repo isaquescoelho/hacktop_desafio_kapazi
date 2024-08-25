@@ -79,12 +79,20 @@ function getBotResponse(message) {
         currentStep = "clientCep";
         return `Ótimo, ${clientInfo.name}! Seus dados estão protegidos pela LGPD. Agora, por favor, informe seu CEP para facilitar no cálculo do frete.`;
     }
-
+    
     if (currentStep === "clientCep") {
-        clientInfo.cep = message;
-        currentStep = "clientProduct";
-        return "Obrigado! O que você está procurando comprar? Pisos, tapetes, capachos ou outros produtos?";
+        const cepPattern = /^[0-9]{5}-?[0-9]{3}$/; // Expressão regular para validar o formato de CEP (com ou sem hífen)
+        
+        if (cepPattern.test(message)) {
+            clientInfo.cep = message;
+            currentStep = "clientProduct";
+            return "Obrigado! O que você está procurando comprar? Pisos, tapetes, capachos ou outros produtos?";
+        } else {
+            // Se o CEP não for válido, pede ao cliente para inserir um CEP válido
+            return "O CEP que você digitou é inválido. Por favor, insira um CEP no formato 00000-000 ou 00000000.";
+        }
     }
+    
 
     if (currentStep === "clientProduct") {
         clientInfo.product = message;
