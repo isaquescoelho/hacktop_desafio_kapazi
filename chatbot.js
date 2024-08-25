@@ -70,7 +70,7 @@ function getBotResponse(message) {
     if (currentStep === "clientCep") {
         clientInfo.cep = message;
         currentStep = "clientProduct";
-        return "Obrigado! O que você está procurando comprar? Somos uma loja de pisos, temos vários modelos.";
+        return "Obrigado! O que você está procurando comprar? Pisos, tapetes, capachos ou outros produtos?";
     }
 
     if (currentStep === "clientProduct") {
@@ -92,29 +92,62 @@ function getBotResponse(message) {
             return `Sem problemas! Para ajudar, temos vários modelos de pisos. Dê uma olhada: <a href="https://loja.kapazi.com.br/piso-vinilico-em-regua-ecokap-carvalho-caiado-kapazi/p" target="_blank">https://loja.kapazi.com.br/piso-vinilico-em-regua-ecokap-carvalho-caiado-kapazi/p</a>. Queremos garantir o piso perfeito para você!`;
         } else {
             const metragem = parseFloat(clientInfo.metragem);
-            const total = metragem * pisoPrecoPorMetro;
-            currentStep = "offerBudget";
-
-            // Primeira mensagem com o orçamento
-            const botDiv = document.createElement('div');
-            botDiv.classList.add('message', 'botMessage');
-            botDiv.innerHTML = `Perfeito! Com base na metragem informada (${clientInfo.metragem}m²), o valor do piso vinílico escolhido seria aproximadamente R$ ${total.toFixed(2)}. Você pode continuar sua compra através do nosso site: <a href="https://loja.kapazi.com.br/" target="_blank">https://loja.kapazi.com.br/</a>.`;
-            chatbox.appendChild(botDiv);
-            chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
-
-            // Segunda mensagem após um pequeno delay
-            setTimeout(() => {
-                const followUpDiv = document.createElement('div');
-                followUpDiv.classList.add('message', 'botMessage');
-                followUpDiv.innerHTML = `Esse é um orçamento aproximado. Você pode precisar verificar o nível do seu piso e se necessita de um contrapiso. Se precisar de ajuda, entre em contato conosco via <a href="https://web.whatsapp.com/send?phone=+554121060955&text=Ol%C3%A1%2C+gostaria+de+maiores+informa%C3%A7%C3%B5es+sobre+os+produtos+da+Kapazi" target="_blank">Whatsapp Kapazi</a>.`;
-                chatbox.appendChild(followUpDiv);
-                chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
-            }); // Delay de 2 segundos para exibir a segunda mensagem
-
-            return ''; // Não retornar mensagem adicional ao usuário, pois as mensagens foram tratadas manualmente
+            currentStep = "clientConditions"; // Novo passo para perguntas sobre o piso atual
+            return `Perfeito! Agora, o seu piso atual está nivelado ou você já fez a preparação do contrapiso? Isso é importante para determinar se será necessário um ajuste adicional.`;
         }
     }
-
+    
+    if (currentStep === "clientConditions") {
+        clientInfo.conditions = message;
+        currentStep = "clientBudget";
+        return `Ótimo! Você tem um orçamento aproximado para o projeto? Isso nos ajudará a selecionar as melhores opções dentro do seu limite.`;
+    }
+    
+    if (currentStep === "clientBudget") {
+        clientInfo.budget = message;
+        currentStep = "clientAssistance";
+        return `Entendido! Você vai precisar de assistência para instalar o piso ou já tem um instalador? Podemos oferecer suporte adicional se necessário.`;
+    }
+    
+    if (currentStep === "clientAssistance") {
+        clientInfo.assistance = message;
+    
+        // Verifica se o cliente precisa de instalador
+        if (message.toLowerCase().includes("não") || message.toLowerCase().includes("nao")) {
+            // Sugerir plataforma de instalação
+            const suggestionMessage = `Sem problemas! Recomendamos que você procure por um instalador em plataformas como o GetNinjas. Lembrando que a Kapazi não possui vínculo com os profissionais dessas plataformas e essa é apenas uma sugestão para facilitar a sua busca.`;
+            
+            const botDivSuggestion = document.createElement('div');
+            botDivSuggestion.classList.add('message', 'botMessage');
+            botDivSuggestion.innerHTML = suggestionMessage;
+            chatbox.appendChild(botDivSuggestion);
+        }
+    
+        currentStep = "offerBudget"; // Continua para a parte do orçamento
+    
+        // Mensagem final com orçamento fictício e informações sobre assistência
+        const metragem = parseFloat(clientInfo.metragem);
+        const total = metragem * pisoPrecoPorMetro;
+    
+        // Primeira mensagem com o orçamento
+        const botDivBudget = document.createElement('div');
+        botDivBudget.classList.add('message', 'botMessage');
+        botDivBudget.innerHTML = `Perfeito! Com base na metragem informada (${clientInfo.metragem}m²), o valor do piso vinílico escolhido seria aproximadamente R$ ${total.toFixed(2)}. Você pode continuar sua compra através do nosso site: <a href="https://loja.kapazi.com.br/" target="_blank">https://loja.kapazi.com.br/</a>.`;
+        chatbox.appendChild(botDivBudget);
+    
+        // Segunda mensagem explicativa sobre o orçamento
+        setTimeout(() => {
+            const botDivFollowUp = document.createElement('div');
+            botDivFollowUp.classList.add('message', 'botMessage');
+            botDivFollowUp.innerHTML = `Esse é um orçamento aproximado. Verifique se o nível do seu piso está correto e se precisa de um contrapiso. Se precisar de ajuda, entre em contato conosco via <a href="https://web.whatsapp.com/send?phone=+554121060955&text=Ol%C3%A1%2C+gostaria+de+maiores+informa%C3%A7%C3%B5es+sobre+os+produtos+da+Kapazi" target="_blank">Whatsapp Kapazi</a>.`;
+            chatbox.appendChild(botDivFollowUp);
+            chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
+        }, 2000);
+    
+        chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
+        return ''; // Não há mais mensagens do usuário necessárias
+    }
+      
     return "Desculpe, não entendi. Pode repetir?";
 }
 
