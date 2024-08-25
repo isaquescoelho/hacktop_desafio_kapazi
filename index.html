@@ -96,10 +96,16 @@
         /* Estilos responsivos para dispositivos móveis */
         @media screen and (max-width: 600px) {
             #chatContainer {
-                width: 100%;
-                height: 100vh; /* Ocupa toda a altura em dispositivos móveis */
-                max-width: 100%;
+                width: 85vw;
+                height: 90vh; /* Ocupa toda a altura em dispositivos móveis */
                 border-radius: 0;
+                margin-bottom: 6vh;
+            }
+
+            #userInput {
+                position: relative; /* Reseta o position para mobile */
+                width: 95%;
+                bottom: 0;
             }
 
             #userInput {
