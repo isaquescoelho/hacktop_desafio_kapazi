@@ -1,4 +1,3 @@
-// Adiciona o evento de pressionar 'Enter' no campo de input
 document.getElementById('userMessage').addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         sendMessage(); // Envia a mensagem quando o Enter é pressionado
@@ -7,8 +6,33 @@ document.getElementById('userMessage').addEventListener('keydown', function(even
 
 let currentStep = "greeting"; // Mantém o controle do passo atual da conversa
 let clientInfo = {}; // Armazena as informações do cliente
-const pisoPrecoPorMetro = 142; // Preço do piso por metro quadrado\
+const pisoPrecoPorMetro = 142; // Preço do piso por metro quadrado
 
+// Função para iniciar a conversa
+function startConversation() {
+    const botDiv = document.createElement('div');
+    botDiv.classList.add('message', 'botMessage');
+    botDiv.innerHTML = "Olá! Seja bem-vindo ao KAI bot, o seu assistente virtual. Qual é o seu nome?";
+    chatbox.appendChild(botDiv);
+    currentStep = "clientName"; // Define o próximo passo para coletar o nome
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function showTypingAnimation() {
+    const typingDiv = document.createElement('div');
+    typingDiv.classList.add('message', 'botMessage');
+    typingDiv.setAttribute('id', 'typing');
+    typingDiv.textContent = "...";
+    chatbox.appendChild(typingDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function removeTypingAnimation() {
+    const typingDiv = document.getElementById('typing');
+    if (typingDiv) {
+        typingDiv.remove();
+    }
+}
 
 function sendMessage() {
     const userMessage = document.getElementById('userMessage').value;
@@ -26,45 +50,34 @@ function sendMessage() {
     // Limpa o campo de input
     document.getElementById('userMessage').value = "";
 
-    // Respostas do chatbot com base no estado atual
-    const botResponse = getBotResponse(userMessage);
-    const botDiv = document.createElement('div');
-    botDiv.classList.add('message', 'botMessage');
-    botDiv.innerHTML = botResponse; // Use innerHTML para aceitar tags HTML
-    chatbox.appendChild(botDiv);
+    // Exibe a animação de digitação do bot
+    showTypingAnimation();
 
-    // Mantém o scroll sempre no final
-    chatbox.scrollTop = chatbox.scrollHeight;
+    // Atrasar a resposta do bot por 1 segundo
+    setTimeout(() => {
+        // Remove a animação de digitação antes de mostrar a resposta
+        removeTypingAnimation();
+
+        // Respostas do chatbot com base no estado atual
+        const botResponse = getBotResponse(userMessage);
+        const botDiv = document.createElement('div');
+        botDiv.classList.add('message', 'botMessage');
+        botDiv.innerHTML = botResponse; // Use innerHTML para aceitar tags HTML
+        chatbox.appendChild(botDiv);
+
+        // Mantém o scroll sempre no final
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }, 1500);
 }
 
 function getBotResponse(message) {
     message = message.toLowerCase(); // Faz o tratamento da mensagem em minúsculas para facilitar as comparações
 
-    if (currentStep === "greeting") {
-        currentStep = "userType"; // Muda o estado para a próxima pergunta
-        return "Olá! Você é cliente, lojista ou instalador?";
-    }
-
-    if (currentStep === "userType") {
-        if (message.includes("cliente")) {
-            currentStep = "clientName";
-            return "Perfeito! Informamos que seus dados estão protegidos pela LGPD. Por favor, qual é o seu nome?";
-        } else if (message.includes("lojista")) {
-            currentStep = "merchantQuestions";
-            return "Ótimo! Como lojista, gostaria de saber mais sobre preços no atacado ou sobre como fazer um pedido em massa?";
-        } else if (message.includes("instalador")) {
-            currentStep = "installerQuestions";
-            return "Excelente! Como instalador, você precisa de suporte técnico ou informações sobre produtos?";
-        } else {
-            return "Por favor, escolha uma das opções: cliente, lojista ou instalador.";
-        }
-    }
-
     // Fluxo de perguntas para o cliente
     if (currentStep === "clientName") {
         clientInfo.name = message;
         currentStep = "clientCep";
-        return "Ótimo, " + clientInfo.name + "! Agora, por favor, informe seu CEP para facilitar no cálculo do frete.";
+        return `Ótimo, ${clientInfo.name}! Seus dados estão protegidos pela LGPD. Agora, por favor, informe seu CEP para facilitar no cálculo do frete.`;
     }
 
     if (currentStep === "clientCep") {
@@ -87,15 +100,21 @@ function getBotResponse(message) {
 
     if (currentStep === "clientMetragem") {
         clientInfo.metragem = message;
-        if (message.includes("não sei") || message.includes("nao sei")) {
+        
+        // Verifica se a mensagem contém "não sei" ou é um número válido
+        if (message.toLowerCase().includes("não sei") || message.toLowerCase().includes("nao sei")) {
             currentStep = "offerModels";
-            return `Sem problemas! Para ajudar, temos vários modelos de pisos. Dê uma olhada: <a href="https://loja.kapazi.com.br/piso-vinilico-em-regua-ecokap-carvalho-caiado-kapazi/p" target="_blank">https://loja.kapazi.com.br/piso-vinilico-em-regua-ecokap-carvalho-caiado-kapazi/p</a>. Queremos garantir o piso perfeito para você!`;
-        } else {
+            return `Sem problemas! Para ajudar, temos vários modelos de pisos. Dê uma olhada: <a href="https://loja.kapazi.com.br/pisos---gramas/pisos?initialMap=c&initialQuery=pisos---gramas&map=category-1,category-2" target="_blank">Pisos</a>. Queremos garantir o piso perfeito para você!`;
+        } else if (!isNaN(message) && parseFloat(message) > 0) {
             const metragem = parseFloat(clientInfo.metragem);
             currentStep = "clientConditions"; // Novo passo para perguntas sobre o piso atual
             return `Perfeito! Agora, o seu piso atual está nivelado ou você já fez a preparação do contrapiso? Isso é importante para determinar se será necessário um ajuste adicional.`;
+        } else {
+            // Se a entrada não for um número válido ou "não sei", pede para inserir um valor válido
+            return "Por favor, insira uma metragem válida em metros quadrados ou digite 'não sei' caso você não saiba.";
         }
     }
+    
     
     if (currentStep === "clientConditions") {
         clientInfo.conditions = message;
@@ -147,28 +166,9 @@ function getBotResponse(message) {
         chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
         return ''; // Não há mais mensagens do usuário necessárias
     }
-      
+
     return "Desculpe, não entendi. Pode repetir?";
 }
 
-function handleMerchantQuestions(message) {
-    // Fluxo de perguntas para lojistas
-    if (message.includes("atacado")) {
-        return "Temos preços especiais para lojistas! Você pode se cadastrar no nosso portal de lojistas para mais informações.";
-    } else if (message.includes("pedido em massa")) {
-        return "Podemos ajudar com pedidos em massa! Quantas unidades você está pensando em pedir?";
-    } else {
-        return "Gostaria de saber mais sobre preços no atacado ou fazer um pedido em massa?";
-    }
-}
-
-function handleInstallerQuestions(message) {
-    // Fluxo de perguntas para instaladores
-    if (message.includes("suporte técnico")) {
-        return "Nosso suporte técnico está disponível para ajudar! Qual é o problema que você está enfrentando?";
-    } else if (message.includes("informações sobre produtos")) {
-        return "Nossos produtos são projetados para fácil instalação. Qual produto você gostaria de saber mais?";
-    } else {
-        return "Você precisa de suporte técnico ou mais informações sobre produtos?";
-    }
-}
+// Inicia a conversa
+startConversation();
