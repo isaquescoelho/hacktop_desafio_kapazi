@@ -10,39 +10,67 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
+            height: 100vh;
             background-color: #f4f4f9;
             overflow: hidden;
         }
 
         /* Container principal do chatbot */
         #chatContainer {
-            display: flex;
-            flex-direction: column;
             width: 100%;
             max-width: 400px;
-            height: 100vh; /* O chat sempre ocupará toda a altura da tela */
+            height: 85vh;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Caixa de mensagens do chatbot */
+        /* Área de exibição de mensagens do chatbot */
         #chatbox {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             overflow-y: auto;
             background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Estilos para as mensagens */
+        .message {
+            padding: 8px 12px;
+            margin: 6px 0;
+            border-radius: 12px;
+            max-width: 70%;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+
+        /* Estilos para mensagens do usuário */
+        .userMessage {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        /* Estilos para mensagens do bot */
+        .botMessage {
+            background-color: #e0e0e0;
+            color: #333;
+            align-self: flex-start;
+            margin-right: auto;
         }
 
         /* Área de input de texto e botão de envio */
         #userInput {
             display: flex;
-            padding: 10px;
+            padding: 8px;
             background-color: #f1f1f1;
         }
 
@@ -65,43 +93,36 @@
             font-size: 14px;
         }
 
-        /* Estilos das mensagens */
-        .message {
-            padding: 10px;
-            margin: 6px 0;
-            border-radius: 12px;
-            max-width: 75%;
-            word-wrap: break-word;
-            font-size: 14px;
-        }
-
-        .userMessage {
-            background-color: #007bff;
-            color: white;
-            align-self: flex-end;
-        }
-
-        .botMessage {
-            background-color: #e0e0e0;
-            color: #333;
-            align-self: flex-start;
-        }
-
-        /* Ajustes para dispositivos móveis */
+        /* Estilos responsivos para dispositivos móveis */
         @media screen and (max-width: 600px) {
             #chatContainer {
-                border-radius: 0; /* Remove arredondamento em celulares */
-                height: 100vh; /* Garante que o chat sempre ocupe a tela inteira */
+                width: 100%;
+                height: 100vh; /* Ocupa toda a altura em dispositivos móveis */
+                max-width: 100%;
+                border-radius: 0;
             }
 
-            input[type="text"], button {
-                padding: 12px;
-                font-size: 13px;
+            #userInput {
+                position: relative; /* Reseta o position para mobile */
+                width: 100%;
+                bottom: 0;
             }
 
             .message {
                 font-size: 13px;
-                padding: 8px;
+                padding: 6px 10px;
+                margin: 4px 0;
+            }
+
+            input[type="text"], button {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+
+        @media screen and (min-width: 601px) {
+            #userInput {
+                position: relative; /* Para desktops, o input permanece no fluxo normal da página */
             }
         }
     </style>
@@ -120,8 +141,20 @@
     </div>
 </div>
 
-<!-- Script para adicionar mensagens dinamicamente -->
+<!-- Script do Chatbot e ajuste de redimensionamento -->
 <script src="chatbot.js"></script>
+<script>
+    // Ajusta a altura da área de mensagens quando o teclado é aberto
+    window.addEventListener('resize', () => {
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('userInput');
+        const totalHeight = window.innerHeight;
+        const inputHeight = userInput.offsetHeight;
+
+        // Ajusta a altura do chatbox
+        chatbox.style.height = `${totalHeight - inputHeight}px`;
+    });
+</script>
 
 </body>
 </html>
