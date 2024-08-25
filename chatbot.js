@@ -12,7 +12,7 @@ const pisoPrecoPorMetro = 142; // Preço do piso por metro quadrado
 function startConversation() {
     const botDiv = document.createElement('div');
     botDiv.classList.add('message', 'botMessage');
-    botDiv.innerHTML = "Olá! Seja bem-vindo ao KAI bot, o seu assistente virtual. Qual é o seu nome?";
+    botDiv.innerHTML = "Olá! Seja bem-vindo ao nosso assistente virtual KAI Bot. Qual é o seu nome?";
     chatbox.appendChild(botDiv);
     currentStep = "clientName"; // Define o próximo passo para coletar o nome
     chatbox.scrollTop = chatbox.scrollHeight;
@@ -22,7 +22,7 @@ function showTypingAnimation() {
     const typingDiv = document.createElement('div');
     typingDiv.classList.add('message', 'botMessage');
     typingDiv.setAttribute('id', 'typing');
-    typingDiv.textContent = "...";
+    typingDiv.textContent = "KAI Bot está digitando...";
     chatbox.appendChild(typingDiv);
     chatbox.scrollTop = chatbox.scrollHeight;
 }
@@ -67,22 +67,21 @@ function sendMessage() {
 
         // Mantém o scroll sempre no final
         chatbox.scrollTop = chatbox.scrollHeight;
-    }, 1500);
+    }, 1000); // 1 segundo de atraso para simular que o bot está digitando
 }
 
 function getBotResponse(message) {
     message = message.toLowerCase(); // Faz o tratamento da mensagem em minúsculas para facilitar as comparações
 
-    // Fluxo de perguntas para o cliente
     if (currentStep === "clientName") {
         clientInfo.name = message;
         currentStep = "clientCep";
         return `Ótimo, ${clientInfo.name}! Seus dados estão protegidos pela LGPD. Agora, por favor, informe seu CEP para facilitar no cálculo do frete.`;
     }
-    
+
     if (currentStep === "clientCep") {
         const cepPattern = /^[0-9]{5}-?[0-9]{3}$/; // Expressão regular para validar o formato de CEP (com ou sem hífen)
-        
+    
         if (cepPattern.test(message)) {
             clientInfo.cep = message;
             currentStep = "clientProduct";
@@ -92,7 +91,6 @@ function getBotResponse(message) {
             return "O CEP que você digitou é inválido. Por favor, insira um CEP no formato 00000-000 ou 00000000.";
         }
     }
-    
 
     if (currentStep === "clientProduct") {
         clientInfo.product = message;
@@ -111,8 +109,8 @@ function getBotResponse(message) {
 
         // Verifica se a mensagem contém "não sei" ou é um número válido
         if (message.toLowerCase().includes("não sei") || message.toLowerCase().includes("nao sei")) {
-            currentStep = "offerModels";
-            return `Sem problemas! Para ajudar, temos vários modelos de pisos. Dê uma olhada: <a href="https://loja.kapazi.com.br/pisos---gramas/pisos?initialMap=c&initialQuery=pisos---gramas&map=category-1,category-2" target="_blank">Pisos</a>. Queremos garantir o piso perfeito para você!`;
+            currentStep = "askMoreHelp";
+            return `Sem problemas! Enquanto você verifica a metragem, dê uma olhada na nossa seção de pisos e acompanhe as promoções: <a href="https://loja.kapazi.com.br/pisos---gramas/pisos?initialMap=c&initialQuery=pisos---gramas&map=category-1,category-2" target="_blank">Seção de Pisos</a>. Há algo mais que possamos ajudar você? (Digite 'sim' ou 'não')`;
         } else if (!isNaN(message) && parseFloat(message) > 0) {
             const metragem = parseFloat(clientInfo.metragem);
             currentStep = "clientConditions"; // Novo passo para perguntas sobre o piso atual
@@ -123,7 +121,6 @@ function getBotResponse(message) {
         }
     }
 
-
     if (currentStep === "clientConditions") {
         clientInfo.conditions = message;
         currentStep = "clientBudget";
@@ -133,7 +130,7 @@ function getBotResponse(message) {
     if (currentStep === "clientBudget") {
         clientInfo.budget = message;
         currentStep = "clientAssistance";
-        return `Entendido! Você vai precisar de assistência para instalar o piso ou já tem um instalador? Podemos oferecer suporte adicional se necessário.`;
+        return `Entendido! Você vai precisar de assistência para instalar o piso? Podemos oferecer suporte adicional se necessário.`;
     }
 
     if (currentStep === "clientAssistance") {
@@ -141,9 +138,8 @@ function getBotResponse(message) {
 
         // Verifica se o cliente precisa de instalador
         if (message.toLowerCase().includes("não") || message.toLowerCase().includes("nao")) {
-            // Sugerir plataforma de instalação
             const suggestionMessage = `Sem problemas! Recomendamos que você procure por um instalador em plataformas como o GetNinjas. Lembrando que a Kapazi não possui vínculo com os profissionais dessas plataformas e essa é apenas uma sugestão para facilitar a sua busca.`;
-
+            
             const botDivSuggestion = document.createElement('div');
             botDivSuggestion.classList.add('message', 'botMessage');
             botDivSuggestion.innerHTML = suggestionMessage;
@@ -171,8 +167,22 @@ function getBotResponse(message) {
             chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
         }, 2000);
 
+        currentStep = "askMoreHelp"; // Ajusta para perguntar se precisa de mais ajuda após orçamento
         chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
-        return ''; // Não há mais mensagens do usuário necessárias
+        return ''; // Não há mais mensagens do usuário necessárias até aqui
+    }
+
+    // Pergunta se o cliente precisa de mais ajuda após "não sei" na metragem ou ao encerrar o atendimento
+    if (currentStep === "askMoreHelp") {
+        if (message.toLowerCase().includes("não") || message.toLowerCase().includes("nao")) {
+            currentStep = "greeting"; // Redefine o passo para saudação inicial
+            return `Obrigado por usar nosso assistente virtual! Volte sempre que precisar.`;
+        } else if (message.toLowerCase().includes("sim")) {
+            currentStep = "clientCep"; // Reinicia a partir do CEP
+            return `Ótimo! Vamos reiniciar o atendimento. Por favor, informe seu CEP para facilitar no cálculo do frete.`;
+        } else {
+            return "Por favor, responda com 'sim' ou 'não'. Há algo mais que possamos ajudar?";
+        }
     }
 
     return "Desculpe, não entendi. Pode repetir?";
