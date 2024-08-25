@@ -130,7 +130,7 @@ function getBotResponse(message) {
     if (currentStep === "clientBudget") {
         clientInfo.budget = message;
         currentStep = "clientAssistance";
-        return `Entendido! Você vai precisar de assistência para instalar o piso? Podemos oferecer suporte adicional se necessário.`;
+        return `Entendido! Você quem vai fazer a instalação ou ja tem um tecnico para isso? Podemos oferecer suporte adicional se necessário.`;
     }
 
     if (currentStep === "clientAssistance") {
@@ -139,7 +139,7 @@ function getBotResponse(message) {
         // Verifica se o cliente precisa de instalador
         if (message.toLowerCase().includes("não") || message.toLowerCase().includes("nao")) {
             const suggestionMessage = `Sem problemas! Recomendamos que você procure por um instalador em plataformas como o GetNinjas. Lembrando que a Kapazi não possui vínculo com os profissionais dessas plataformas e essa é apenas uma sugestão para facilitar a sua busca.`;
-            
+
             const botDivSuggestion = document.createElement('div');
             botDivSuggestion.classList.add('message', 'botMessage');
             botDivSuggestion.innerHTML = suggestionMessage;
