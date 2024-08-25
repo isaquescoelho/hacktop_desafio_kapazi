@@ -94,7 +94,24 @@ function getBotResponse(message) {
             const metragem = parseFloat(clientInfo.metragem);
             const total = metragem * pisoPrecoPorMetro;
             currentStep = "offerBudget";
-            return `Perfeito! Com base na metragem informada (${clientInfo.metragem}m²), o valor do piso vinílico escolhido seria aproximadamente R$ ${total.toFixed(2)}. Você pode continuar sua compra através do nosso site: <a href="https://loja.kapazi.com.br/" target="_blank">https://loja.kapazi.com.br/</a>.`;
+
+            // Primeira mensagem com o orçamento
+            const botDiv = document.createElement('div');
+            botDiv.classList.add('message', 'botMessage');
+            botDiv.innerHTML = `Perfeito! Com base na metragem informada (${clientInfo.metragem}m²), o valor do piso vinílico escolhido seria aproximadamente R$ ${total.toFixed(2)}. Você pode continuar sua compra através do nosso site: <a href="https://loja.kapazi.com.br/" target="_blank">https://loja.kapazi.com.br/</a>.`;
+            chatbox.appendChild(botDiv);
+            chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
+
+            // Segunda mensagem após um pequeno delay
+            setTimeout(() => {
+                const followUpDiv = document.createElement('div');
+                followUpDiv.classList.add('message', 'botMessage');
+                followUpDiv.innerHTML = `Esse é um orçamento aproximado. Você pode precisar verificar o nível do seu piso e se necessita de um contrapiso. Se precisar de ajuda, entre em contato conosco via <a href="https://web.whatsapp.com/send?phone=+554121060955&text=Ol%C3%A1%2C+gostaria+de+maiores+informa%C3%A7%C3%B5es+sobre+os+produtos+da+Kapazi" target="_blank">Whatsapp Kapazi</a>.`;
+                chatbox.appendChild(followUpDiv);
+                chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
+            }); // Delay de 2 segundos para exibir a segunda mensagem
+
+            return ''; // Não retornar mensagem adicional ao usuário, pois as mensagens foram tratadas manualmente
         }
     }
 
