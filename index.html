@@ -20,14 +20,15 @@
         /* Container principal do chatbot */
         #chatContainer {
             width: 100%;
-            max-width: 350px; /* Limita o tamanho máximo mesmo em telas grandes */
-            height: 85vh; /* Ajusta para ocupar um pouco menos de espaço vertical */
+            max-width: 350px;
+            height: 85vh;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         /* Área de exibição de mensagens do chatbot */
@@ -44,9 +45,9 @@
             padding: 8px 12px;
             margin: 6px 0;
             border-radius: 12px;
-            max-width: 70%; /* Garante que as mensagens não ocupem mais que 70% da largura */
+            max-width: 70%;
             word-wrap: break-word;
-            font-size: 14px; /* Tamanho de fonte mais compacto */
+            font-size: 14px;
         }
 
         /* Estilos para mensagens do usuário */
@@ -95,23 +96,36 @@
         @media screen and (max-width: 600px) {
             #chatContainer {
                 width: 100%;
-                height: 85vh; /* Ajusta para que o chat não ocupe toda a altura da tela */
-                max-width: 100%; /* Permite que o chat ocupe toda a largura da tela */
-                border-radius: 0; /* Remove as bordas arredondadas em telas móveis */
+                height: 85vh;
+                max-width: 100%;
+                border-radius: 0;
+                position: absolute;
+                bottom: 0;
+            }
+
+            #userInput {
+                position: relative; /* Reseta o position para mobile */
+                width: 100%;
+                bottom: 0;
             }
 
             .message {
-                font-size: 13px; /* Diminui o tamanho da fonte */
+                font-size: 13px;
                 padding: 6px 10px;
                 margin: 4px 0;
             }
 
             input[type="text"], button {
                 padding: 10px;
-                font-size: 13px; /* Diminui o tamanho da fonte e padding no input e botão */
+                font-size: 13px;
             }
         }
 
+        @media screen and (min-width: 601px) {
+            #userInput {
+                position: relative; /* Para desktops, fica no fluxo normal da página */
+            }
+        }
     </style>
 </head>
 <body>
