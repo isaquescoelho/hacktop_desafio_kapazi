@@ -5,19 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot KAI</title>
     <style>
+        /* Estilos gerais do corpo da página */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            background-color: #f4f4f9;
         }
 
+        /* Container principal do chatbot */
         #chatContainer {
-            width: 320px;
-            height: 500px;
+            width: 90%;
+            max-width: 400px;
+            height: 80vh;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -26,37 +30,43 @@
             overflow: hidden;
         }
 
+        /* Área de exibição de mensagens do chatbot */
         #chatbox {
             flex: 1;
             padding: 10px;
             overflow-y: auto;
             background-color: #f9f9f9;
             border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* Estilos para as mensagens */
         .message {
-            padding: 8px 12px;
+            padding: 10px;
             margin: 8px 0;
             border-radius: 12px;
-            max-width: 80%;
+            max-width: 70%;
             word-wrap: break-word;
         }
 
+        /* Estilos para mensagens do usuário */
         .userMessage {
             background-color: #007bff;
             color: white;
-            align-self: flex-end;
-            margin-right: 10px;
+            align-self: flex-end;  /* Alinha à direita */
+            margin-left: auto;  /* Força o alinhamento à direita */
         }
 
+        /* Estilos para mensagens do bot */
         .botMessage {
-            margin-bottom: 0;
             background-color: #e0e0e0;
             color: #333;
-            align-self: flex-start;
-            margin-left: 10px;
+            align-self: flex-start;  /* Alinha à esquerda */
+            margin-right: auto;  /* Força o alinhamento à esquerda */
         }
 
+        /* Área de input de texto e botão de envio */
         #userInput {
             display: flex;
             padding: 10px;
@@ -80,22 +90,42 @@
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        /* Estilos responsivos para dispositivos móveis */
+        @media screen and (max-width: 600px) {
+            #chatContainer {
+                width: 100%;
+                height: 100vh;
+                max-width: none;
+            }
+
+            .message {
+                font-size: 14px;
+                padding: 8px;
+                margin: 5px 0;
+            }
+
+            input[type="text"], button {
+                padding: 12px;
+            }
         }
+
     </style>
 </head>
 <body>
 
+<!-- Estrutura do Chatbot -->
 <div id="chatContainer">
+    <!-- Caixa de mensagens -->
     <div id="chatbox"></div>
 
+    <!-- Área de input e envio -->
     <div id="userInput">
         <input type="text" id="userMessage" placeholder="Digite sua mensagem...">
         <button onclick="sendMessage()">Enviar</button>
     </div>
 </div>
 
+<!-- Script do Chatbot -->
 <script src="chatbot.js"></script>
 
 </body>
