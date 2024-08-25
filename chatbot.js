@@ -100,7 +100,7 @@ function getBotResponse(message) {
 
     if (currentStep === "clientMetragem") {
         clientInfo.metragem = message;
-        
+
         // Verifica se a mensagem contém "não sei" ou é um número válido
         if (message.toLowerCase().includes("não sei") || message.toLowerCase().includes("nao sei")) {
             currentStep = "offerModels";
@@ -114,46 +114,46 @@ function getBotResponse(message) {
             return "Por favor, insira uma metragem válida em metros quadrados ou digite 'não sei' caso você não saiba.";
         }
     }
-    
-    
+
+
     if (currentStep === "clientConditions") {
         clientInfo.conditions = message;
         currentStep = "clientBudget";
         return `Ótimo! Você tem um orçamento aproximado para o projeto? Isso nos ajudará a selecionar as melhores opções dentro do seu limite.`;
     }
-    
+
     if (currentStep === "clientBudget") {
         clientInfo.budget = message;
         currentStep = "clientAssistance";
         return `Entendido! Você vai precisar de assistência para instalar o piso ou já tem um instalador? Podemos oferecer suporte adicional se necessário.`;
     }
-    
+
     if (currentStep === "clientAssistance") {
         clientInfo.assistance = message;
-    
+
         // Verifica se o cliente precisa de instalador
         if (message.toLowerCase().includes("não") || message.toLowerCase().includes("nao")) {
             // Sugerir plataforma de instalação
             const suggestionMessage = `Sem problemas! Recomendamos que você procure por um instalador em plataformas como o GetNinjas. Lembrando que a Kapazi não possui vínculo com os profissionais dessas plataformas e essa é apenas uma sugestão para facilitar a sua busca.`;
-            
+
             const botDivSuggestion = document.createElement('div');
             botDivSuggestion.classList.add('message', 'botMessage');
             botDivSuggestion.innerHTML = suggestionMessage;
             chatbox.appendChild(botDivSuggestion);
         }
-    
+
         currentStep = "offerBudget"; // Continua para a parte do orçamento
-    
+
         // Mensagem final com orçamento fictício e informações sobre assistência
         const metragem = parseFloat(clientInfo.metragem);
         const total = metragem * pisoPrecoPorMetro;
-    
+
         // Primeira mensagem com o orçamento
         const botDivBudget = document.createElement('div');
         botDivBudget.classList.add('message', 'botMessage');
         botDivBudget.innerHTML = `Perfeito! Com base na metragem informada (${clientInfo.metragem}m²), o valor do piso vinílico escolhido seria aproximadamente R$ ${total.toFixed(2)}. Você pode continuar sua compra através do nosso site: <a href="https://loja.kapazi.com.br/" target="_blank">https://loja.kapazi.com.br/</a>.`;
         chatbox.appendChild(botDivBudget);
-    
+
         // Segunda mensagem explicativa sobre o orçamento
         setTimeout(() => {
             const botDivFollowUp = document.createElement('div');
@@ -162,7 +162,7 @@ function getBotResponse(message) {
             chatbox.appendChild(botDivFollowUp);
             chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
         }, 2000);
-    
+
         chatbox.scrollTop = chatbox.scrollHeight; // Mantém o scroll sempre no final
         return ''; // Não há mais mensagens do usuário necessárias
     }
