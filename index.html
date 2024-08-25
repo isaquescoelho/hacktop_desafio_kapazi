@@ -29,7 +29,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            position: relative;
         }
 
         /* Área de exibição de mensagens do chatbot */
@@ -97,21 +96,14 @@
         @media screen and (max-width: 600px) {
             #chatContainer {
                 width: 100%;
-                height: 100vh; /* Ocupa toda a altura em dispositivos móveis */
+                height: calc(100vh - 60px); /* Deixa espaço para o teclado */
                 max-width: 100%;
                 border-radius: 0;
             }
 
-            #userInput {
-                position: relative; /* Reseta o position para mobile */
-                width: 100%;
-                bottom: 0;
-            }
-
-            .message {
-                font-size: 13px;
-                padding: 6px 10px;
-                margin: 4px 0;
+            #chatbox {
+                height: auto;
+                max-height: 60vh; /* Limita a altura do chatbox */
             }
 
             input[type="text"], button {
@@ -120,11 +112,6 @@
             }
         }
 
-        @media screen and (min-width: 601px) {
-            #userInput {
-                position: relative; /* Para desktops, o input permanece no fluxo normal da página */
-            }
-        }
     </style>
 </head>
 <body>
@@ -144,15 +131,14 @@
 <!-- Script do Chatbot e ajuste de redimensionamento -->
 <script src="chatbot.js"></script>
 <script>
-    // Ajusta a altura da área de mensagens quando o teclado é aberto
+    // Redimensiona o chatbox quando o teclado é ativado
     window.addEventListener('resize', () => {
         const chatbox = document.getElementById('chatbox');
         const userInput = document.getElementById('userInput');
-        const totalHeight = window.innerHeight;
-        const inputHeight = userInput.offsetHeight;
-
-        // Ajusta a altura do chatbox
-        chatbox.style.height = `${totalHeight - inputHeight}px`;
+        const availableHeight = window.innerHeight - userInput.offsetHeight;
+        
+        // Ajusta a altura do chatbox para não ser maior que o espaço disponível
+        chatbox.style.maxHeight = `${availableHeight - 20}px`; // Deixa um pequeno espaço adicional
     });
 </script>
 
